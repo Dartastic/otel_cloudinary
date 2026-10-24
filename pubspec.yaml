@@ -2,7 +2,7 @@ name: otel_cloudinary
 description: >-
   OpenTelemetry instrumentation for cloudinary by Dartastic.io. Adds standard
   OpenTelemetry observability to applications that use cloudinary.
-version: 0.1.0-wip
+version: 0.1.0
 repository: https://github.com/dartastic/otel_cloudinary
 homepage: https://dartastic.io
 
