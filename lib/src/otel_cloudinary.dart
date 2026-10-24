@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_cloudinary_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_cloudinary';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class CloudinaryResult {
+  /// Creates a result.
   const CloudinaryResult({
     this.publicId,
     this.resourceType,
@@ -70,8 +71,13 @@ class CloudinaryResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class CloudinaryCallResult<T> {
+  /// Creates a call result.
   const CloudinaryCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final CloudinaryResult? result;
 }
@@ -100,92 +106,92 @@ Future<T> tracedCloudinary<T>({
   final span = _tracer().startSpan(
     'cloudinary $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
     if (r.result != null) {
       final extras = <Attribute<Object>>[];
       if (r.result!.publicId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.public_id',
           r.result!.publicId!,
         ));
       }
       if (r.result!.resourceType != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.resource_type',
           r.result!.resourceType!,
         ));
       }
       if (r.result!.format != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.format',
           r.result!.format!,
         ));
       }
       if (r.result!.transformationCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'cloudinary.transformation_count',
           r.result!.transformationCount!,
         ));
       }
       if (r.result!.eager != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'cloudinary.eager',
           r.result!.eager!,
         ));
       }
       if (r.result!.bytes != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'cloudinary.bytes',
           r.result!.bytes!,
         ));
       }
       if (r.result!.width != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'cloudinary.width',
           r.result!.width!,
         ));
       }
       if (r.result!.height != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'cloudinary.height',
           r.result!.height!,
         ));
       }
       if (r.result!.durationSec != null) {
-        extras.add(OTel.attributeDouble(
+        extras.add(OTelAPI.attributeDouble(
           'cloudinary.duration_sec',
           r.result!.durationSec!,
         ));
       }
       if (r.result!.assetFolder != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.asset_folder',
           r.result!.assetFolder!,
         ));
       }
       if (r.result!.cloudName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.cloud_name',
           r.result!.cloudName!,
         ));
       }
       if (r.result!.usedAddon != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.addon',
           r.result!.usedAddon!,
         ));
       }
       if (r.result!.requestId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'cloudinary.request.id',
           r.result!.requestId!,
         ));
       }
       if (r.result!.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           r.result!.statusCode!,
         ));
@@ -196,13 +202,13 @@ Future<T> tracedCloudinary<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
